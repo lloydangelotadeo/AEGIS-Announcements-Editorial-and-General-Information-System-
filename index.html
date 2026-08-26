@@ -1,0 +1,1679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>AEGIS — PENRO Nueva Vizcaya</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green-900:#0F3A22;
+    --green-800:#154029;
+    --green-700:#1B5E39;
+    --green-600:#227444;
+    --green-500:#2E8B4F;
+    --green-100:#E7F5EC;
+    --green-50:#F3FAF5;
+    --gray-900:#141815;
+    --gray-600:#5B655F;
+    --gray-400:#8A9289;
+    --gray-200:#E4E7E1;
+    --gray-100:#F4F5F2;
+    --white:#FFFFFF;
+    --red:#C0392B;
+    --font-display:'Inter', -apple-system, sans-serif;
+    --font-body:'Inter', -apple-system, sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;background:#1a1a1a;font-family:var(--font-body);color:var(--gray-900);}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+
+  #app{width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 0%, #21261f 0%, #14100c 70%);
+    padding:18px;}
+
+  .frame{
+    position:relative;
+    width:min(100%, calc((100vh - 36px) * 9 / 16));
+    height:min(100%, calc((100vw - 36px) * 16 / 9));
+    aspect-ratio:9/16;
+    background:var(--white);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow:0 30px 70px rgba(0,0,0,0.55), 0 0 0 8px #0d0d0d, 0 0 0 9px #333;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ===== MASTHEAD ===== */
+  .masthead{
+    background:linear-gradient(135deg, var(--green-700) 0%, var(--green-900) 100%);
+    color:var(--white);
+    padding:4% 5% 3.5%;
+    flex-shrink:0;
+    position:relative;
+    overflow:hidden;
+  }
+  .masthead::after{
+    content:'';position:absolute;top:-40%;right:-20%;width:60%;height:140%;
+    background:radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .masthead-top{display:flex;align-items:center;gap:3%;position:relative;z-index:1;}
+  .seal{width:19%;min-width:54px;flex-shrink:0;border-radius:50%;background:rgba(255,255,255,0.08);padding:2%;}
+  .masthead-text{flex:1;min-width:0;}
+  .agency-line{
+    font-family:var(--font-body);
+    font-size:0.75rem;
+    font-weight:600;
+    letter-spacing:0.03em;
+    color:rgba(255,255,255,0.65);
+    margin:0 0 2px;
+    text-transform:uppercase;
+  }
+  .wordmark{
+    font-family:var(--font-display);
+    font-weight:800;
+    font-size:clamp(1.5rem, 6vw, 2.1rem);
+    letter-spacing:-0.01em;
+    margin:0;
+    line-height:1.1;
+  }
+  .masthead-right{
+    text-align:right;flex-shrink:0;position:relative;z-index:1;
+  }
+  .masthead-right .r1{font-size:0.85rem;font-weight:700;color:var(--white);}
+  .masthead-right .r2{font-size:1rem;color:rgba(255,255,255,0.6);margin-top:1px;font-weight: 600;}
+
+  .status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:5%;
+    padding-top:3%;
+    border-top:1px solid rgba(255,255,255,0.15);
+    position:relative;z-index:1;
+  }
+  .clock{font-size:0.75rem;font-weight:600;}
+  .clock .date{display:block;font-size:0.58rem;color:rgba(255,255,255,0.6);font-weight:400;margin-top:1px;}
+  .weather-chip{
+    display:flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.12);
+    border-radius:20px;
+    padding:4px 10px;
+    font-size:0.72rem;font-weight:600;
+  }
+  .weather-chip .icon{font-size:0.9rem;}
+
+  /* ===== STEP NAV ===== */
+  .step-nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:4% 6%;flex-shrink:0;background:var(--white);
+    border-bottom:1px solid var(--gray-200);
+  }
+  .step{
+    display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;padding:0;flex:1;
+  }
+  .step-dot{
+    width:28px;height:28px;border-radius:50%;
+    background:var(--gray-200);color:var(--gray-600);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-mono);font-size:0.8rem;font-weight:600;
+    flex-shrink:0;transition:all 0.3s ease;
+  }
+  .step.active .step-dot{background:var(--green-600);color:var(--white);}
+  .step-label{font-size:0.72rem;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.02em;transition:color 0.3s ease;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .step.active .step-label{color:var(--green-700);}
+  .step-line{flex:0 0 4%;height:1px;background:var(--gray-200);margin:0 2px;}
+
+  /* ===== STAGE ===== */
+  .stage{flex:1;position:relative;overflow:hidden;background:var(--gray-100);}
+  .panel{
+    position:absolute;inset:0;
+    padding:5% 6%;
+    opacity:0;
+    transform:translateX(16px);
+    pointer-events:none;
+    transition:opacity 0.55s ease, transform 0.55s ease;
+    overflow-y:auto;
+  }
+  .panel.active{opacity:1;transform:translateX(0);pointer-events:auto;}
+
+  /* Editorial panel: keep the prev/next nav pinned in the same spot no
+     matter how long the current story is. The panel becomes a column;
+     the story text gets its own scrollable area (flex:1) while the
+     title/description stay put above it and the nav stays put below it. */
+  #panel-1{display:flex;flex-direction:column;}
+  #panel-1 #editList{flex:1 1 auto;min-height:0;overflow-y:auto;}
+  #panel-1 .editorial-nav{flex:0 0 auto;}
+
+  #panel-4{display:flex;flex-direction:column;}
+  #panel-4 #posterStage{flex:1 1 auto;min-height:0;overflow-y:auto;}
+  #panel-4 .editorial-nav{flex:0 0 auto;}
+
+
+  .panel-title{font-family:var(--font-display);font-weight:800;font-size:clamp(1.2rem,5vw,1.5rem);margin:0 0 4px;color:var(--gray-900);}
+  .panel-desc{font-size:0.78rem;color:var(--gray-600);margin:0 0 6%;line-height:1.4;}
+
+  /* Card shell (matches upload-card language) */
+  .card{
+    background:var(--white);border:1px solid var(--gray-200);border-radius:12px;
+    padding:4% 4.5%;margin-bottom:3.5%;
+    box-shadow:0 1px 2px rgba(0,0,0,0.03);
+  }
+  .card-row{display:flex;gap:10px;align-items:flex-start;}
+  .card-icon{
+    width:34px;height:34px;border-radius:9px;background:var(--green-100);
+    display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;
+  }
+  .card-icon.urgent{background:#FBEAE8;}
+  .card-body{flex:1;min-width:0;}
+  .card-title{font-weight:700;font-size:0.88rem;margin:0 0 3px;color:var(--gray-900);}
+  .card-sub{font-size:0.78rem;color:var(--gray-600);margin:0 0 6px;line-height:1.45;}
+  .card-meta{font-family:var(--font-mono);font-size:0.6rem;color:var(--green-600);font-weight:600;letter-spacing:0.02em;}
+  .badge-urgent{
+    display:inline-block;background:#FBEAE8;color:var(--red);
+    font-size:0.58rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;
+    padding:2px 7px;border-radius:5px;margin-bottom:4px;
+  }
+
+  /* Editorial feature */
+  .feature-card{background:var(--white);border:1px solid var(--gray-200);border-radius:12px;padding:5%;}
+  .feature-title{font-family:var(--font-display);font-weight:800;font-size:clamp(1.1rem,4.6vw,1.35rem);line-height:1.2;margin:0 0 8px;color:var(--gray-900);}
+  .feature-byline{display:flex;align-items:center;gap:6px;font-size:0.68rem;color:var(--gray-600);font-weight:600;margin-bottom:4%;}
+  .feature-byline .byline-dot{width:4px;height:4px;border-radius:50%;background:var(--gray-400);}
+  .feature-body{font-size:0.85rem;line-height:1.65;color:var(--gray-900);}
+  .feature-dots{display:flex;gap:5px;margin-top:12px;}
+  .feature-dot{width:5px;height:5px;border-radius:50%;background:var(--gray-200);transition:background 0.3s ease, width 0.3s ease;}
+  .feature-dot.active{background:var(--green-600);width:14px;border-radius:3px;}
+  .save-note{font-size:0.72rem;color:var(--green-700);margin:8px 0 0;min-height:1em;}
+  .save-note.note-error{color:var(--red);}
+
+  /* Poster board: full-bleed image toggle, same rotation language as Editorial */
+  .poster-card{
+    background:var(--white);border:1px solid var(--gray-200);border-radius:12px;
+    overflow:hidden;display:flex;flex-direction:column;height:100%;min-height:52vh;cursor:pointer;
+  }
+  .poster-image-wrap{position:relative;flex:1;min-height:0;background:var(--white);display:flex;align-items:center;justify-content:center;}
+  .poster-image-wrap img{width:100%;height:100%;object-fit:contain;display:block;}
+  .poster-placeholder{
+    display:flex;align-items:center;justify-content:center;height:100%;width:100%;
+    color:var(--gray-400);font-size:0.75rem;text-align:center;padding:10%;
+    font-weight:600;letter-spacing:0.02em;
+  }
+  .poster-caption{padding:5%;text-align:center;background:var(--white);flex-shrink:0;}
+  .poster-caption .poster-title{font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--gray-900);margin:0;}
+  .poster-caption .poster-date{font-size:0.68rem;color:var(--gray-600);margin-top:3px;font-weight:600;}
+  .poster-dots{display:flex;gap:5px;justify-content:center;margin-top:10px;}
+  .poster-dot{width:5px;height:5px;border-radius:50%;background:var(--gray-200);transition:background 0.3s ease, width 0.3s ease;}
+  .poster-dot.active{background:var(--green-600);width:14px;border-radius:3px;}
+
+  /* Calendar */
+  .event-date-badge{
+    width:44px;height:44px;border-radius:10px;background:var(--green-700);color:var(--white);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .event-date-badge .day{font-family:var(--font-display);font-weight:800;font-size:1rem;line-height:1;}
+  .event-date-badge .mon{font-size:0.5rem;font-weight:700;text-transform:uppercase;margin-top:1px;letter-spacing:0.03em;}
+
+  /* Weather */
+  .env-tile{
+    background:linear-gradient(135deg, var(--green-700), var(--green-900));
+    color:var(--white);border-radius:14px;padding:6% 5%;text-align:center;margin-bottom:4%;
+  }
+  .env-temp{font-family:var(--font-display);font-weight:800;font-size:clamp(2.3rem,11vw,3rem);line-height:1;}
+  .env-cond{font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.85);margin-top:4px;}
+  .env-grid{display:flex;justify-content:space-around;margin-top:6%;padding-top:5%;border-top:1px solid rgba(255,255,255,0.18);}
+  .env-stat .val{font-family:var(--font-display);font-weight:700;font-size:1.05rem;}
+  .env-stat .lbl{font-size:0.56rem;letter-spacing:0.04em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-top:2px;font-weight:600;}
+  .env-advisory{
+    background:var(--green-50);border:1px solid var(--green-100);
+    padding:4% 5%;font-size:0.8rem;line-height:1.5;color:var(--gray-900);border-radius:10px;
+  }
+  .env-advisory strong{color:var(--green-700);}
+
+  .empty-state{font-size:0.78rem;color:var(--gray-400);text-align:center;padding:20% 8%;font-weight:500;}
+
+  /* ===== TICKER FOOTER ===== */
+  .ticker-bar{
+    flex-shrink:0;background:linear-gradient(135deg, var(--green-800), var(--green-900));
+    display:flex;align-items:center;height:6%;min-height:28px;position:relative;
+  }
+  .ticker-label{
+    background:var(--white);color:var(--green-800);font-weight:800;font-size:0.6rem;
+    letter-spacing:0.03em;padding:0 3%;height:60%;display:flex;align-items:center;
+    flex-shrink:0;border-radius:20px;margin-left:3%;text-transform:uppercase;
+  }
+  .ticker-viewport{flex:1;overflow:hidden;position:relative;height:100%;margin-left:2%;}
+  .ticker-track{
+    position:absolute;white-space:nowrap;font-size:0.72rem;font-weight:500;color:var(--white);
+    top:50%;transform:translateY(-50%);animation:scroll-left 28s linear infinite;padding-left:100%;
+  }
+  @keyframes scroll-left{ from{transform:translate(0,-50%);} to{transform:translate(-100%,-50%);} }
+  .dots{display:flex;gap:5px;padding:0 3%;flex-shrink:0;}
+  .dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.3);}
+  .dot.active{background:var(--white);}
+
+  .footer-strip{
+    flex-shrink:0;background:var(--green-900);color:rgba(255,255,255,0.55);
+    text-align:center;font-size:0.52rem;padding:1.4% 4%;letter-spacing:0.01em;
+  }
+
+  /* Admin toggle */
+  .admin-toggle{
+    position:absolute;bottom:12%;right:3%;width:30px;height:30px;border-radius:50%;
+    background:rgba(15,58,34,0.55);border:1px solid rgba(255,255,255,0.3);color:var(--white);
+    font-size:0.9rem;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:20;opacity:0.55;transition:opacity 0.2s;
+  }
+  .admin-toggle:hover{opacity:1;}
+
+  /* ===== ADMIN OVERLAY ===== */
+  .admin-overlay{position:fixed;inset:0;background:var(--gray-100);z-index:100;display:flex;flex-direction:column;}
+  .admin-overlay.hidden{display:none;}
+  .admin-header{
+    background:linear-gradient(135deg, var(--green-700), var(--green-900));color:var(--white);
+    padding:16px 24px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+  }
+  .admin-header h1{font-family:var(--font-display);font-size:1.15rem;margin:0;font-weight:800;}
+  .admin-header .sub{font-size:0.68rem;color:rgba(255,255,255,0.7);margin-top:2px;}
+  .admin-close{
+    background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.3);color:var(--white);
+    border-radius:8px;padding:8px 16px;font-weight:700;cursor:pointer;font-size:0.85rem;
+  }
+  .admin-body{flex:1;display:flex;overflow:hidden;}
+  .admin-nav{width:190px;flex-shrink:0;background:var(--white);padding:16px 0;border-right:1px solid var(--gray-200);display:flex;flex-direction:column;}
+  .admin-nav button{
+    background:transparent;border:none;color:var(--gray-600);text-align:left;padding:13px 20px;
+    font-family:var(--font-body);font-weight:600;font-size:0.85rem;cursor:pointer;border-left:3px solid transparent;
+  }
+  .admin-nav button.active{background:var(--green-50);color:var(--green-700);border-left-color:var(--green-600);}
+  .admin-content{flex:1;overflow-y:auto;padding:24px 32px;max-width:760px;}
+  .admin-section{display:none;}
+  .admin-section.active{display:block;}
+  .admin-section h2{font-family:var(--font-display);color:var(--gray-900);margin:0 0 4px;font-size:1.3rem;font-weight:800;}
+  .admin-section .hint{font-size:0.8rem;color:var(--gray-600);margin:0 0 20px;}
+
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--white);padding:20px;border-radius:12px;border:1px solid var(--gray-200);margin-bottom:24px;}
+  .form-grid.single{grid-template-columns:1fr;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field.span2{grid-column:1/-1;}
+  .field label{font-size:0.7rem;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:0.02em;}
+  .field input,.field select,.field textarea{
+    font-family:var(--font-body);font-size:0.9rem;padding:9px 10px;
+    border:1px solid var(--gray-200);border-radius:8px;background:var(--gray-100);color:var(--gray-900);
+  }
+  .field textarea{resize:vertical;min-height:70px;}
+  .form-actions{grid-column:1/-1;display:flex;gap:10px;margin-top:4px;}
+  .btn{font-family:var(--font-body);font-weight:700;font-size:0.85rem;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;}
+  .btn-primary{background:var(--green-600);color:#fff;}
+  .btn-primary:hover{background:var(--green-700);}
+  .btn-ghost{background:transparent;color:var(--gray-600);border:1px solid var(--gray-200);}
+
+  .list-item{
+    background:var(--white);border:1px solid var(--gray-200);border-radius:10px;
+    padding:12px 14px;margin-bottom:10px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start;
+  }
+  .list-item .info{flex:1;min-width:0;}
+  .list-item .title{font-weight:700;font-size:0.88rem;color:var(--gray-900);margin-bottom:2px;}
+  .list-item .meta{font-size:0.7rem;color:var(--gray-600);}
+  .list-item .row-actions{display:flex;gap:6px;flex-shrink:0;}
+  .icon-btn{background:transparent;border:1px solid var(--gray-200);border-radius:7px;padding:5px 9px;font-size:0.72rem;cursor:pointer;color:var(--gray-600);font-family:var(--font-body);}
+  .icon-btn:hover{border-color:var(--green-500);color:var(--green-700);}
+  .icon-btn.danger:hover{border-color:var(--red);color:var(--red);}
+  .icon-btn:disabled{opacity:0.35;cursor:default;}
+  .icon-btn:disabled:hover{border-color:var(--gray-200);color:var(--gray-600);}
+
+  .save-note{font-size:0.7rem;color:var(--green-600);height:16px;margin-top:8px;font-weight:600;}
+
+  .field input[type="file"]{padding:7px;font-size:0.8rem;}
+  .image-thumb-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+  .image-thumb{position:relative;width:60px;height:60px;flex-shrink:0;}
+  .image-thumb img{width:100%;height:100%;object-fit:cover;border-radius:8px;border:1px solid var(--gray-200);display:block;}
+  .image-thumb button{
+    position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;
+    background:var(--red);color:#fff;border:2px solid #fff;font-size:0.68rem;line-height:1;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;
+  }
+
+  .thumb-wrap{position:relative;margin-bottom:10px;}
+  .card-thumb{width:100%;max-height:130px;object-fit:cover;border-radius:9px;display:block;}
+  .feature-image{width:100%;max-height:180px;object-fit:cover;border-radius:10px;display:block;}
+  .photo-count{
+    position:absolute;bottom:8px;right:8px;background:rgba(15,20,17,0.72);color:#fff;
+    font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;
+  }
+
+  /* Clickable cards */
+  .card, .feature-card{cursor:pointer;transition:box-shadow 0.15s ease, transform 0.1s ease;}
+  .card:active, .feature-card:active{transform:scale(0.98);}
+  .card:hover, .feature-card:hover{box-shadow:0 3px 10px rgba(0,0,0,0.08);}
+  .tap-hint{display:inline-block;margin-top:6px;font-size:0.68rem;color:var(--green-600);font-weight:700;}
+
+  /* ===== DETAIL MODAL ===== */
+  .detail-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:flex-end;justify-content:center;}
+  .detail-modal.hidden{display:none;}
+  .detail-backdrop{position:absolute;inset:0;background:rgba(15,20,17,0.62);}
+  .detail-panel{
+    position:relative;z-index:1;background:var(--white);width:100%;max-height:95%;
+    border-radius:18px 18px 0 0;overflow-y:auto;display:flex;flex-direction:column;
+    animation:detail-slide-up 0.25s ease;
+  }
+  @keyframes detail-slide-up{from{transform:translateY(28px);opacity:0.4;}to{transform:translateY(0);opacity:1;}}
+  .detail-close{
+    position:absolute;top:12px;right:12px;z-index:2;width:36px;height:36px;border-radius:50%;
+    background:rgba(15,20,17,0.55);color:#fff;border:none;font-size:1.2rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;line-height:1;
+  }
+  .detail-gallery{position:relative;width:100%;max-height:80vh;background:var(--gray-900);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .detail-gallery.gallery-light{background:var(--white);}
+  .detail-gallery.gallery-light .gallery-img{background:var(--white);}
+  /* width:auto + max-width/max-height (rather than forcing width:100%) lets a
+     portrait photo size up to the available height instead of being
+     letterboxed down to a narrow strip inside a full-width, short box. */
+  .gallery-img{width:auto;height:auto;max-width:100%;max-height:80vh;object-fit:contain;display:block;margin:0 auto;background:var(--gray-900);}
+  .gallery-nav{
+    position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:50%;
+    background:rgba(255,255,255,0.9);border:none;font-size:1.4rem;cursor:pointer;color:var(--gray-900);
+    display:flex;align-items:center;justify-content:center;line-height:1;
+  }
+  .gallery-nav.prev{left:10px;}
+  .gallery-nav.next{right:10px;}
+  .gallery-dots{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px;}
+  .gallery-dots .dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.5);}
+  .gallery-dots .dot.active{background:#fff;}
+  .detail-body{padding:6% 6% 10%;}
+  .detail-badge{
+    display:inline-block;background:#FBEAE8;color:var(--red);font-size:0.7rem;font-weight:700;
+    letter-spacing:0.04em;text-transform:uppercase;padding:3px 10px;border-radius:6px;margin-bottom:10px;
+  }
+  .detail-title{font-family:var(--font-display);font-weight:800;font-size:clamp(1.3rem,5.5vw,1.9rem);margin:0 0 8px;color:var(--gray-900);line-height:1.2;}
+  .detail-meta{font-size:0.8rem;color:var(--gray-600);font-weight:600;margin-bottom:5%;}
+  .detail-text{font-size:0.95rem;line-height:1.75;color:var(--gray-900);white-space:pre-wrap;}
+
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:3px;}
+
+  /* ===== KIOSK MODE ===== */
+  /* On an actual portrait display (e.g. a 32in kiosk running the browser
+     full-screen), fill the entire screen edge-to-edge instead of showing
+     the padded device-mockup frame used for previewing this on a normal
+     landscape desktop/laptop screen. Also bump up the base type scale a
+     notch, since a 32in kiosk is read from further away than a phone or
+     laptop and has a much lower pixel density than either. */
+  @media (orientation: portrait){
+    html{font-size:clamp(16px, 0.9vw + 0.45vh, 21px);}
+    #app{padding:0;background:var(--green-900);}
+    .frame{
+      width:100vw;height:100vh;height:100dvh;
+      max-width:none;max-height:none;aspect-ratio:auto;
+      border-radius:0;box-shadow:none;
+    }
+    .wordmark{font-size:clamp(1.5rem, 6vw, 2.6rem);}
+    .panel-title{font-size:clamp(1.2rem, 5vw, 2.1rem);}
+    .feature-title{font-size:clamp(1.1rem, 4.6vw, 1.9rem);}
+    .env-temp{font-size:clamp(2.3rem, 11vw, 4rem);}
+    .agency-line{font-size:0.85rem;}
+    .masthead-right .r1{font-size:0.95rem;}
+    .masthead-right .r2{font-size:0.85rem;}
+    .step-label{font-size:0.85rem;}
+    .step-dot{width:32px;height:32px;font-size:0.9rem;}
+
+    .editorial-nav{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    margin-top:18px;
+    padding-top:12px;
+    border-top:1px solid var(--gray-200);
+    }
+
+    .editorial-nav button{
+    width:48px;
+    height:48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px solid var(--gray-300);
+    border-radius:50%;
+    background:var(--white);
+    color:var(--gray-800);
+    font-family:var(--font-display);
+    font-size:1.5rem;
+    font-weight:700;
+    line-height:1;
+    cursor:pointer;
+    transition:all .2s ease;
+    box-shadow:0 2px 6px rgba(0,0,0,.06);
+    }
+
+    .editorial-nav button:hover{
+    background:var(--gray-100);
+    border-color:var(--gray-400);
+    transform:translateY(-1px);
+    }
+
+    .editorial-nav button:active{
+    transform:scale(.94);
+    }
+
+    .editorial-nav button:disabled{
+    opacity:.3;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
+    }
+
+    .editorial-nav span{
+    min-width:54px;
+    text-align:center;
+    color:var(--gray-600);
+    font-size:.72rem;
+    font-weight:700;
+    letter-spacing:.05em;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div class="frame">
+    <!-- MASTHEAD -->
+    <header class="masthead">
+      <div class="masthead-top">
+        <div class="masthead-text">
+          <p class="agency-line">DEMO VERSION</p>
+          <h1 class="wordmark">AEGIS</h1>
+        </div>
+        <div class="masthead-right">
+          <div class="r1">COMPANY / OFFICE NAME</div>
+          <div class="r2">Announcements, Editorial and General Information System</div>
+        </div>
+      </div>
+      <div class="status-row">
+        <div class="clock">
+          <span id="clockTime">--:--</span>
+          <span class="date" id="clockDate">-- --- ----</span>
+        </div>
+        <div class="weather-chip">
+          <span class="icon" id="wxIcon">🌤️</span>
+          <span id="wxTemp">--°C</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- STEP NAV -->
+    <nav class="step-nav" id="tabRail">
+      <button class="step active" data-idx="0"><span class="step-dot">1</span><span class="step-label">Notices</span></button>
+      <span class="step-line"></span>
+      <button class="step" data-idx="1"><span class="step-dot">2</span><span class="step-label">Editorial</span></button>
+      <span class="step-line"></span>
+      <button class="step" data-idx="2"><span class="step-dot">3</span><span class="step-label">Calendar</span></button>
+      <span class="step-line"></span>
+      <button class="step" data-idx="3"><span class="step-dot">4</span><span class="step-label">Environment</span></button>
+      <span class="step-line"></span>
+      <button class="step" data-idx="4"><span class="step-dot">5</span><span class="step-label">Posters</span></button>
+    </nav>
+
+    <main class="stage">
+      <section class="panel active" id="panel-0">
+        <p class="panel-title">Announcements</p>
+        <p class="panel-desc" id="annCount">Current office notices and public advisories.</p>
+        <div id="annList"></div>
+      </section>
+
+      <section class="panel" id="panel-1">
+        <p class="panel-title">Editorial &amp; News</p>
+        <p class="panel-desc" id="editCount">Feature stories relevant to the office.</p>
+        <div id="editList"></div>
+
+          <div class="editorial-nav" id="editorialNav">
+            <button id="editorialPrev" type="button" aria-label="Previous editorial">‹</button>
+            <span id="editorialPosition">1 / 1</span>
+            <button id="editorialNext" type="button" aria-label="Next editorial">›</button>
+          </div>
+      </section>
+
+      <section class="panel" id="panel-2">
+        <p class="panel-title">Events Calendar</p>
+        <p class="panel-desc" id="evCount">Upcoming activities and schedules.</p>
+        <div id="evList"></div>
+      </section>
+
+      <section class="panel" id="panel-3">
+        <p class="panel-title">Environmental Watch</p>
+        <p class="panel-desc" id="wxUpdated">Manually logged conditions and advisories.</p>
+        <div id="wxPanel"></div>
+      </section>
+
+      <section class="panel" id="panel-4">
+        <p class="panel-title">Posters</p>
+        <p class="panel-desc" id="posterCount">Campaign and advisory posters for public display.</p>
+        <div id="posterStage"></div>
+
+          <div class="editorial-nav" id="posterNav">
+            <button id="posterPrev" type="button" aria-label="Previous poster">‹</button>
+            <span id="posterPosition">1 / 1</span>
+            <button id="posterNext" type="button" aria-label="Next poster">›</button>
+          </div>
+      </section>
+    </main>
+
+    <!-- TICKER -->
+    <footer class="ticker-bar">
+      <div class="ticker-label">Notices</div>
+      <div class="ticker-viewport">
+        <div class="ticker-track" id="tickerTrack">Loading announcements…</div>
+      </div>
+      <div class="dots" id="dots">
+        <span class="dot active"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      </div>
+    </footer>
+    <div class="footer-strip">Company / Office Name · Address · Other information for footer </div>
+
+    <button class="admin-toggle" id="adminToggle" title="Manage content">⚙</button>
+  </div>
+</div>
+
+<!-- DETAIL MODAL: enlarged, interactive view for a tapped announcement/editorial -->
+<div class="detail-modal hidden" id="detailModal">
+  <div class="detail-backdrop" id="detailBackdrop"></div>
+  <div class="detail-panel">
+    <button class="detail-close" id="detailClose" aria-label="Close">×</button>
+    <div class="detail-gallery" id="detailGallery" style="display:none;">
+      <img class="gallery-img" id="galleryImg" src="" alt="">
+      <button class="gallery-nav prev" id="galleryPrev" aria-label="Previous photo">‹</button>
+      <button class="gallery-nav next" id="galleryNext" aria-label="Next photo">›</button>
+      <div class="gallery-dots" id="galleryDots"></div>
+    </div>
+    <div class="detail-body">
+      <span class="detail-badge" id="detailBadge" style="display:none;">Urgent</span>
+      <h2 class="detail-title" id="detailTitle"></h2>
+      <div class="detail-meta" id="detailMeta"></div>
+      <p class="detail-text" id="detailText"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN OVERLAY -->
+<div class="admin-overlay hidden" id="adminOverlay">
+  <div class="admin-header">
+    <div>
+      <h1>AEGIS Content Manager</h1>
+      <div class="sub">Company / Office Name · changes are shared across every display running this app</div>
+    </div>
+    <button class="admin-close" id="adminClose">Close editor</button>
+  </div>
+  <div class="admin-body">
+    <nav class="admin-nav" id="adminNav">
+      <button class="active" data-sec="announcements">Announcements</button>
+      <button data-sec="editorials">Editorial &amp; News</button>
+      <button data-sec="events">Events Calendar</button>
+      <button data-sec="weather">Environmental Watch</button>
+      <button data-sec="posters">Posters</button>
+    </nav>
+    <div class="admin-content">
+
+      <section class="admin-section active" id="sec-announcements">
+        <h2>Announcements</h2>
+        <p class="hint">Short notices shown on the notices panel and scrolled in the footer ticker.</p>
+        <form class="form-grid" id="formAnn">
+          <div class="field span2"><label>Title</label><input type="text" id="annTitle" required></div>
+          <div class="field span2"><label>Body</label><textarea id="annBody" required></textarea></div>
+          <div class="field"><label>Priority</label>
+            <select id="annPriority"><option value="normal">Normal</option><option value="urgent">Urgent</option></select>
+          </div>
+          <div class="field"><label>Date</label><input type="date" id="annDate"></div>
+          <div class="field span2">
+            <label>Photos (optional, select multiple)</label>
+            <input type="file" id="annImageInput" accept="image/*" multiple>
+            <div class="image-thumb-row" id="annImagePreviewRow"></div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="annSubmitBtn">Add announcement</button>
+            <button type="button" class="btn btn-ghost" id="annCancelBtn" style="display:none;">Cancel edit</button>
+          </div>
+          <p class="save-note" id="annSaveNote"></p>
+        </form>
+        <div id="annAdminList"></div>
+      </section>
+
+      <section class="admin-section" id="sec-editorials">
+        <h2>Editorial &amp; News</h2>
+        <p class="hint">Longer feature stories shown as the featured story panel.</p>
+        <form class="form-grid" id="formEdit">
+          <div class="field span2"><label>Headline</label><input type="text" id="editTitle" required></div>
+          <div class="field"><label>Author</label><input type="text" id="editAuthor" placeholder="Information Unit"></div>
+          <div class="field"><label>Date</label><input type="date" id="editDate"></div>
+          <div class="field span2"><label>Story</label><textarea id="editBody" style="min-height:120px;" required></textarea></div>
+          <div class="field span2">
+            <label>Photos (optional, select multiple)</label>
+            <input type="file" id="editImageInput" accept="image/*" multiple>
+            <div class="image-thumb-row" id="editImagePreviewRow"></div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="editSubmitBtn">Publish story</button>
+            <button type="button" class="btn btn-ghost" id="editCancelBtn" style="display:none;">Cancel edit</button>
+          </div>
+          <p class="save-note" id="editSaveNote"></p>
+        </form>
+        <div id="editAdminList"></div>
+      </section>
+
+      <section class="admin-section" id="sec-events">
+        <h2>Events Calendar</h2>
+        <p class="hint">Upcoming activities shown as a timeline.</p>
+        <form class="form-grid" id="formEv">
+          <div class="field span2"><label>Event title</label><input type="text" id="evTitle" required></div>
+          <div class="field"><label>Date</label><input type="date" id="evDate" required></div>
+          <div class="field"><label>Time</label><input type="text" id="evTime" placeholder="9:00 AM"></div>
+          <div class="field span2"><label>Location</label><input type="text" id="evLoc" placeholder="e.g. Solano, Nueva Vizcaya></div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="evSubmitBtn">Add event</button>
+            <button type="button" class="btn btn-ghost" id="evCancelBtn" style="display:none;">Cancel edit</button>
+          </div>
+        </form>
+        <p class="save-note" id="evSaveNote"></p>
+        <div id="evAdminList"></div>
+      </section>
+
+      <section class="admin-section" id="sec-weather">
+        <h2>Environmental Watch</h2>
+        <p class="hint">Pulled automatically from Open-Meteo every 30 minutes.</p>
+        <button type="button" class="btn btn-ghost" id="wxFetchNow" style="margin-bottom:14px;">🔄 Fetch live data now</button>
+        <form class="form-grid" id="formWx">
+          <div class="field"><label>Temperature (°C)</label><input type="number" id="wxTempInput" step="0.1" required></div>
+          <div class="field"><label>Condition</label><input type="text" id="wxCondInput" placeholder="Partly Cloudy" required></div>
+          <div class="field"><label>Humidity (%)</label><input type="number" id="wxHumInput" min="0" max="100"></div>
+          <div class="field"><label>Air Quality</label><input type="text" id="wxAqiInput" placeholder="Good"></div>
+          <div class="field span2"><label>Advisory note</label><textarea id="wxAdvInput" placeholder="e.g. Light rain expected in upland barangays this afternoon."></textarea></div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update environmental data</button>
+          </div>
+        </form>
+        <p class="save-note" id="wxSaveNote"></p>
+      </section>
+
+      <section class="admin-section" id="sec-posters">
+        <h2>Posters</h2>
+        <p class="hint">Campaign and advisory posters that rotate full-screen on the Posters panel.</p>
+        <form class="form-grid" id="formPoster">
+          <div class="field span2"><label>Poster title</label><input type="text" id="posterTitle" required></div>
+          <div class="field"><label>Date</label><input type="date" id="posterDate"></div>
+          <div class="field span2">
+            <label>Poster image(s)</label>
+            <input type="file" id="posterImageInput" accept="image/*" multiple>
+            <div class="image-thumb-row" id="posterImagePreviewRow"></div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="posterSubmitBtn">Add poster</button>
+            <button type="button" class="btn btn-ghost" id="posterCancelBtn" style="display:none;">Cancel edit</button>
+          </div>
+          <p class="save-note" id="posterSaveNote"></p>
+        </form>
+        <div id="posterAdminList"></div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<script>
+
+(function(){
+  const KEYS = { ann:'announcements', edit:'editorials', ev:'events', wx:'weather', poster:'posters' };
+  const DEFAULTS = {
+    announcements:[
+      {id:'a1', title:'DEMO Announcement 1', body:'This is a demonstration announcement for the AEGIS portfolio version', priority:'urgent', date:new Date().toISOString().slice(0,10)},
+      {id:'a2', title:'DEMO Announcement 2', body:'Avengers: Doomsday will be showing in theaters on December 18, 2026', priority:'normal', date:new Date().toISOString().slice(0,10)},
+      {id:'a3', title:'DEMO Announcement 3', body:'Ultron will return in Vision Quest, streaming this October on Disney+', priority:'normal', date:new Date().toISOString().slice(0,10)}
+    ],
+    editorials:[
+      {id:'e1', title:'DEMO - Office Information Drive', date:new Date().toISOString().slice(0,10),
+       body:'This announcement demonstrates how AEGIS can be used to disseminate important office information preferrably on a 9:16 display'}
+    ],
+    events:[
+      {id:'v1', title:'DEMO Event 1', date:new Date().toISOString().slice(0,10), time:'8:00 AM', location:'DEMO Location'},
+      {id:'v2', title:'DEMO Event 2', date:new Date().toISOString().slice(0,10), time:'9:00 AM', location:'DEMO Location'},
+      {id:'v3', title:'DEMO Event 3', date:new Date().toISOString().slice(0,10), time:'6:30 AM', location:'DEMO Location'}
+    ],
+    weather:{temp:26, condition:'Partly Cloudy', humidity:78, aqi:'Good', advisory:'Light rain expected in upland barangays this afternoon. Motorists are advised to watch for slippery roads.', updated:new Date().toISOString()},
+    posters:[
+      {id:'p1', title:'No Noon Break', date:new Date().toISOString().slice(0,10), images:[]},
+      {id:'p2', title:'Anti-Red Tape Act', date:new Date().toISOString().slice(0,10), images:[]}
+    ]
+  };
+
+  let state = { announcements:[], editorials:[], events:[], weather:{}, posters:[] };
+  let editing = { ann:null, edit:null, ev:null, poster:null };
+
+  //replacement to run demo mode
+  const STORAGE_PREFIX = 'aegis_demo_';
+
+  async function storageGet(key) {
+    try {
+      const value = localStorage.getItem(STORAGE_PREFIX + key);
+      return value ? JSON.parse(value) : null;
+    } catch (e) {
+      console.error('Storage get failed:', e);
+      return null;
+    }
+  }
+
+  async function storageSet(key, val) {
+    try {
+      localStorage.setItem(
+        STORAGE_PREFIX + key,
+        JSON.stringify(val)
+      );
+      return true;
+    } catch (e) {
+      console.error('Storage set failed:',e);
+    }
+  }
+
+  async function storageDelete(key) {
+    try {
+      localStorage.removeItem(STORAGE_PREFIX + key);
+      return true;
+    } catch (e) {
+      console.error('Storage delete failed:', e);
+    }
+  }
+
+  function showSaveNote(id, msg, isError){
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.textContent = msg;
+    el.classList.toggle('note-error', !!isError);
+    if(!isError) setTimeout(()=>{ if(el.textContent===msg) el.textContent=''; }, 3000);
+  }
+
+  async function fetchLiveWeather(){
+    return {error: 'no-backend'};
+  }
+  // Pulls live data, merges it into state.weather (keeping the admin's own
+  // advisory text untouched), and saves it so every display picks it up.
+  async function autoUpdateWeather(){
+    const live = await fetchLiveWeather();
+    if(!live || live.error) return false;
+    state.weather = {
+      ...state.weather,
+      temp: live.temp,
+      condition: live.condition,
+      humidity: live.humidity,
+      aqi: live.aqi,
+      source: 'open-meteo',
+      updated: new Date().toISOString()
+    };
+    const ok = await storageSet(KEYS.wx, state.weather);
+    if(ok) renderDisplay();
+    return ok;
+  }
+
+  function genId(){ return Math.random().toString(36).slice(2,9); }
+
+  // Compress/resize an uploaded image file into a small base64 JPEG data URL,
+  // since storage keys are text/JSON only and capped at 5MB.
+  function fileToCompressedDataUrl(file, maxDim=900, quality=0.72){
+    return new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+          let w = img.width, h = img.height;
+          if(w > h && w > maxDim){ h = Math.round(h * (maxDim/w)); w = maxDim; }
+          else if(h > maxDim){ w = Math.round(w * (maxDim/h)); h = maxDim; }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = reject;
+        img.src = reader.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function wireImageField(inputId, rowId){
+    const input = document.getElementById(inputId);
+    const row = document.getElementById(rowId);
+    let current = [];   // data URLs currently staged for this form
+    let touched = false; // becomes true once the user adds or removes a photo
+
+    function renderThumbs(){
+      row.innerHTML = current.map((src,i)=>`
+        <div class="image-thumb">
+          <img src="${src}" alt="">
+          <button type="button" data-remove-idx="${i}" aria-label="Remove photo">×</button>
+        </div>`).join('');
+    }
+    row.addEventListener('click', e=>{
+      const btn = e.target.closest('[data-remove-idx]');
+      if(!btn) return;
+      current.splice(parseInt(btn.dataset.removeIdx,10), 1);
+      touched = true;
+      renderThumbs();
+    });
+    input.addEventListener('change', async ()=>{
+      const files = Array.from(input.files || []);
+      if(!files.length) return;
+      try{
+        const compressed = await Promise.all(files.map(f=>fileToCompressedDataUrl(f)));
+        current = current.concat(compressed);
+        touched = true;
+        renderThumbs();
+      }catch(err){ console.error('image processing failed', err); }
+      input.value = ''; // lets the same file be re-selected later if needed
+    });
+    return {
+      // Populates the thumbnail row from an item's saved images without
+      // marking the field as "touched" — so if the admin doesn't interact
+      // with the photos at all, the save keeps them exactly as they were.
+      showExisting(images){
+        current = Array.isArray(images) ? images.slice() : [];
+        touched = false;
+        renderThumbs();
+      },
+      reset(){ current = []; touched = false; input.value = ''; renderThumbs(); },
+      // undefined = untouched (caller should keep whatever the item already had)
+      getResult(){ return touched ? current.slice() : undefined; }
+    };
+  }
+  const annImageCtl = wireImageField('annImageInput','annImagePreviewRow');
+  const editImageCtl = wireImageField('editImageInput','editImagePreviewRow');
+  const posterImageCtl = wireImageField('posterImageInput','posterImagePreviewRow');
+
+  // Back-compat: earlier versions of AEGIS stored a single `image` field
+  // instead of an `images` array. These read either shape transparently.
+  function allImages(item){
+    if(item && Array.isArray(item.images)) return item.images;
+    if(item && item.image) return [item.image];
+    return [];
+  }
+  function firstImage(item){ const imgs = allImages(item); return imgs.length ? imgs[0] : null; }
+  function fmtDate(d){
+    if(!d) return '';
+    const dt = new Date(d+'T00:00:00');
+    if(isNaN(dt)) return d;
+    return dt.toLocaleDateString('en-US',{month:'short', day:'numeric', year:'numeric'});
+  }
+
+  async function loadAll(){
+    const [a,e,v,w,p] = await Promise.all([
+      storageGet(KEYS.ann), storageGet(KEYS.edit), storageGet(KEYS.ev), storageGet(KEYS.wx), storageGet(KEYS.poster)
+    ]);
+    state.announcements = a || DEFAULTS.announcements;
+    state.editorials = e || DEFAULTS.editorials;
+    state.events = v || DEFAULTS.events;
+    state.weather = w || DEFAULTS.weather;
+    state.posters = p || DEFAULTS.posters;
+  }
+
+  function renderDisplay(){
+    const annList = document.getElementById('annList');
+    document.getElementById('annCount').textContent = state.announcements.length + ' active notice' + (state.announcements.length===1?'':'s') + ' on file.';
+    annList.innerHTML = state.announcements.length ? state.announcements.map(n => `
+      <div class="card" data-detail-id="${n.id}">
+        ${firstImage(n) ? `<div class="thumb-wrap"><img class="card-thumb" src="${firstImage(n)}" alt="">${allImages(n).length>1?`<span class="photo-count">+${allImages(n).length-1}</span>`:''}</div>` : ''}
+        <div class="card-row">
+          <div class="card-icon ${n.priority==='urgent'?'urgent':''}">${n.priority==='urgent'?'⚠️':'📌'}</div>
+          <div class="card-body">
+            ${n.priority==='urgent' ? '<span class="badge-urgent">Urgent</span>' : ''}
+            <p class="card-title">${escapeHtml(n.title)}</p>
+            <p class="card-sub">${escapeHtml(n.body)}</p>
+            <span class="card-meta">${fmtDate(n.date)}</span>
+            <span class="tap-hint">Tap to view →</span>
+          </div>
+        </div>
+      </div>`).join('') : emptyState('No announcements posted yet.');
+
+    renderEditorialPanel();
+    startEditorialRotation();
+
+    renderPosterPanel();
+    startPosterRotation();
+
+    const evList = document.getElementById('evList');
+    document.getElementById('evCount').textContent = state.events.length + ' upcoming activit' + (state.events.length===1?'y':'ies') + '.';
+    const sortedEv = [...state.events].sort((x,y)=> new Date(x.date) - new Date(y.date));
+    evList.innerHTML = sortedEv.length ? sortedEv.map(ev => {
+      const dt = new Date(ev.date+'T00:00:00');
+      const day = isNaN(dt) ? '--' : dt.getDate();
+      const mon = isNaN(dt) ? '' : dt.toLocaleDateString('en-US',{month:'short'});
+      return `
+      <div class="card">
+        <div class="card-row">
+          <div class="event-date-badge"><span class="day">${day}</span><span class="mon">${mon}</span></div>
+          <div class="card-body">
+            <p class="card-title">${escapeHtml(ev.title)}</p>
+            <p class="card-sub">${escapeHtml(ev.time||'')}${ev.time&&ev.location?' · ':''}${escapeHtml(ev.location||'')}</p>
+          </div>
+        </div>
+      </div>`;
+    }).join('') : emptyState('No events scheduled.');
+
+    const w = state.weather;
+    const wxWhen = w.updated ? new Date(w.updated).toLocaleString('en-US',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}) : null;
+    document.getElementById('wxUpdated').textContent = wxWhen
+      ? (w.source === 'open-meteo' ? '🟢 Live · updated ' + wxWhen : 'Manually logged · updated ' + wxWhen)
+      : 'Manually logged conditions and advisories.';
+    document.getElementById('wxPanel').innerHTML = `
+      <div class="env-tile">
+        <div class="env-temp">${w.temp ?? '--'}°C</div>
+        <div class="env-cond">${escapeHtml(w.condition||'—')}</div>
+        <div class="env-grid">
+          <div class="env-stat"><div class="val">${w.humidity ?? '--'}%</div><div class="lbl">Humidity</div></div>
+          <div class="env-stat"><div class="val">${escapeHtml(w.aqi||'--')}</div><div class="lbl">Air Quality</div></div>
+        </div>
+      </div>
+      ${w.advisory ? `<div class="env-advisory"><strong>Advisory. </strong>${escapeHtml(w.advisory)}</div>` : ''}`;
+
+    document.getElementById('wxTemp').textContent = (w.temp ?? '--') + '°C';
+    document.getElementById('wxIcon').textContent = iconFor(w.condition);
+
+    const track = document.getElementById('tickerTrack');
+    const items = state.announcements.map(n => (n.priority==='urgent'?'⚠ ':'') + n.title);
+    track.textContent = items.length ? items.join('     •     ') : 'No current announcements.';
+  }
+
+  function iconFor(cond){
+    if(!cond) return '🌤️';
+    const c = cond.toLowerCase();
+    if(c.includes('rain')) return '🌧️';
+    if(c.includes('storm')||c.includes('thunder')) return '⛈️';
+    if(c.includes('cloud')) return '⛅';
+    if(c.includes('sun')||c.includes('clear')) return '☀️';
+    if(c.includes('haze')||c.includes('fog')) return '🌫️';
+    return '🌤️';
+  }
+  function emptyState(msg){ return `<div class="empty-state">${escapeHtml(msg)}</div>`; }
+  function escapeHtml(str){
+    return String(str??'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  }
+
+  // Editorial & News rotation: cycles through multiple stories on an interval;
+  // with a single story it just displays it (no rotation needed).
+  let edActiveIdx = 0, edRotateTimer = null;
+  function renderEditorialPanel(){
+    const editList = document.getElementById('editList');
+    document.getElementById('editCount').textContent = state.editorials.length + ' stor' + (state.editorials.length===1?'y':'ies') + ' published.';
+    if(state.editorials.length){
+      if(edActiveIdx >= state.editorials.length) edActiveIdx = 0;
+      const top = state.editorials[edActiveIdx];
+      editList.innerHTML = `
+        <div class="feature-card" data-detail-id="${top.id}">
+          ${firstImage(top) ? `<div class="thumb-wrap"><img class="feature-image" src="${firstImage(top)}" alt="">${allImages(top).length>1?`<span class="photo-count">+${allImages(top).length-1}</span>`:''}</div>` : ''}
+          <p class="feature-title">${escapeHtml(top.title)}</p>
+          <div class="feature-byline">${escapeHtml(top.author||'PENRO Information Unit')}<span class="byline-dot"></span>${fmtDate(top.date)}</div>
+          <p class="feature-body">${escapeHtml(top.body)}</p>
+          <span class="tap-hint">Tap to view →</span>
+          ${state.editorials.length>1 ? `<div class="feature-dots">${state.editorials.map((_,i)=>`<span class="feature-dot ${i===edActiveIdx?'active':''}"></span>`).join('')}</div>` : ''}
+        </div>`;
+    } else {
+      editList.innerHTML = emptyState('No editorial content published yet.');
+    }
+    const nav = document.getElementById('editorialNav');
+    const position = document.getElementById('editorialPosition');
+    const prev = document.getElementById('editorialPrev');
+    const next = document.getElementById('editorialNext');
+
+    if(nav){
+    nav.style.display = state.editorials.length > 1 ? 'flex' : 'none';
+    }
+
+    if(position){
+    position.textContent = state.editorials.length
+    ? `${edActiveIdx + 1} / ${state.editorials.length}`
+    : '0 / 0';
+    }
+
+    if(prev){
+    prev.disabled = state.editorials.length <= 1 || edActiveIdx === 0;
+    }
+
+    if(next){
+    next.disabled = state.editorials.length <= 1 || edActiveIdx === state.editorials.length - 1;
+    }
+  }
+  function startEditorialRotation(){
+    if(edRotateTimer){ clearInterval(edRotateTimer); edRotateTimer = null; }
+    if(state.editorials.length > 1){
+      edRotateTimer = setInterval(()=>{
+        edActiveIdx = (edActiveIdx+1) % state.editorials.length;
+        renderEditorialPanel();
+      }, 8000);
+    }
+  }
+
+  // Posters: rotates full-bleed poster images (e.g. "No Noon Break",
+  // "Anti-Red Tape Act") the same way the Editorial panel rotates stories.
+  let posterActiveIdx = 0, posterRotateTimer = null;
+  function renderPosterPanel(){
+    const stage = document.getElementById('posterStage');
+    document.getElementById('posterCount').textContent = state.posters.length + ' poster' + (state.posters.length===1?'':'s') + ' on rotation.';
+    if(state.posters.length){
+      if(posterActiveIdx >= state.posters.length) posterActiveIdx = 0;
+      const top = state.posters[posterActiveIdx];
+      const img = firstImage(top);
+      stage.innerHTML = `
+        <div class="poster-card" data-detail-id="${top.id}">
+          <div class="poster-image-wrap">
+            ${img ? `<img src="${img}" alt="${escapeHtml(top.title)}">` : `<div class="poster-placeholder">No image uploaded yet<br>for "${escapeHtml(top.title)}"</div>`}
+          </div>
+          <div class="poster-caption">
+            <p class="poster-title">${escapeHtml(top.title)}</p>
+            ${top.date ? `<div class="poster-date">${fmtDate(top.date)}</div>` : ''}
+            ${state.posters.length>1 ? `<div class="poster-dots">${state.posters.map((_,i)=>`<span class="poster-dot ${i===posterActiveIdx?'active':''}"></span>`).join('')}</div>` : ''}
+          </div>
+        </div>`;
+    } else {
+      stage.innerHTML = emptyState('No posters uploaded yet.');
+    }
+    const nav = document.getElementById('posterNav');
+    const position = document.getElementById('posterPosition');
+    const prev = document.getElementById('posterPrev');
+    const next = document.getElementById('posterNext');
+
+    if(nav){
+      nav.style.display = state.posters.length > 1 ? 'flex' : 'none';
+    }
+    if(position){
+      position.textContent = state.posters.length
+        ? `${posterActiveIdx + 1} / ${state.posters.length}`
+        : '0 / 0';
+    }
+    if(prev){
+      prev.disabled = state.posters.length <= 1 || posterActiveIdx === 0;
+    }
+    if(next){
+      next.disabled = state.posters.length <= 1 || posterActiveIdx === state.posters.length - 1;
+    }
+  }
+  function startPosterRotation(){
+    if(posterRotateTimer){ clearInterval(posterRotateTimer); posterRotateTimer = null; }
+    if(state.posters.length > 1){
+      posterRotateTimer = setInterval(()=>{
+        posterActiveIdx = (posterActiveIdx+1) % state.posters.length;
+        renderPosterPanel();
+      }, 8000);
+    }
+  }
+
+  let activeIdx = 0, rotateTimer = null;
+  function goTo(i){
+    activeIdx = i;
+    document.querySelectorAll('.panel').forEach((p,idx)=> p.classList.toggle('active', idx===i));
+    document.querySelectorAll('.step').forEach((t,idx)=> t.classList.toggle('active', idx===i));
+    document.querySelectorAll('#dots .dot').forEach((d,idx)=> d.classList.toggle('active', idx===i));
+  }
+  function startRotation(){
+    if(rotateTimer) clearInterval(rotateTimer);
+    rotateTimer = setInterval(()=> goTo((activeIdx+1)%5), 9000);
+  }
+  document.getElementById('tabRail').addEventListener('click', e=>{
+    const btn = e.target.closest('.step');
+    if(!btn) return;
+    goTo(parseInt(btn.dataset.idx,10));
+    startRotation();
+  });
+
+  // ===== Detail modal: enlarged, interactive view for a tapped card =====
+  let galleryImages = [], galleryIdx = 0;
+
+  function renderGalleryFrame(){
+    document.getElementById('galleryImg').src = galleryImages[galleryIdx] || '';
+    document.getElementById('galleryDots').innerHTML = galleryImages.length > 1
+      ? galleryImages.map((_,i)=>`<span class="dot ${i===galleryIdx?'active':''}"></span>`).join('')
+      : '';
+    const showNav = galleryImages.length > 1;
+    document.getElementById('galleryPrev').style.display = showNav ? 'flex' : 'none';
+    document.getElementById('galleryNext').style.display = showNav ? 'flex' : 'none';
+  }
+
+  function openDetail(kind, id){
+    const list = kind === 'ann' ? state.announcements : kind === 'edit' ? state.editorials : state.posters;
+    const item = list.find(x => x.id === id);
+    if(!item) return;
+
+    galleryImages = allImages(item);
+    galleryIdx = 0;
+
+    document.getElementById('detailTitle').textContent = item.title;
+    const badge = document.getElementById('detailBadge');
+    if(kind === 'ann' && item.priority === 'urgent'){
+      badge.style.display = 'inline-block'; badge.textContent = 'Urgent';
+    } else {
+      badge.style.display = 'none';
+    }
+    document.getElementById('detailMeta').textContent = kind === 'edit'
+      ? `${item.author || 'PENRO Information Unit'} · ${fmtDate(item.date)}`
+      : fmtDate(item.date);
+    document.getElementById('detailText').textContent = item.body || '';
+
+    document.getElementById('detailGallery').style.display = galleryImages.length ? 'block' : 'none';
+    document.getElementById('detailGallery').classList.add('gallery-light');
+    renderGalleryFrame();
+
+    document.getElementById('detailModal').classList.remove('hidden');
+    // Pause auto-rotation while someone's actually reading something.
+    if(rotateTimer){ clearInterval(rotateTimer); rotateTimer = null; }
+    if(edRotateTimer){ clearInterval(edRotateTimer); edRotateTimer = null; }
+    if(posterRotateTimer){ clearInterval(posterRotateTimer); posterRotateTimer = null; }
+  }
+  function closeDetail(){
+    document.getElementById('detailModal').classList.add('hidden');
+    startRotation();
+    startEditorialRotation();
+    startPosterRotation();
+  }
+  document.getElementById('detailClose').addEventListener('click', closeDetail);
+  document.getElementById('detailBackdrop').addEventListener('click', closeDetail);
+  document.addEventListener('keydown', e=>{
+    if(e.key === 'Escape' && !document.getElementById('detailModal').classList.contains('hidden')) closeDetail();
+  });
+  document.getElementById('galleryPrev').addEventListener('click', e=>{
+    e.stopPropagation();
+    galleryIdx = (galleryIdx - 1 + galleryImages.length) % galleryImages.length;
+    renderGalleryFrame();
+  });
+  document.getElementById('galleryNext').addEventListener('click', e=>{
+    e.stopPropagation();
+    galleryIdx = (galleryIdx + 1) % galleryImages.length;
+    renderGalleryFrame();
+  });
+  document.getElementById('annList').addEventListener('click', e=>{
+    const card = e.target.closest('[data-detail-id]');
+    if(card) openDetail('ann', card.dataset.detailId);
+  });
+  document.getElementById('editList').addEventListener('click', e=>{
+    const card = e.target.closest('[data-detail-id]');
+    if(card) openDetail('edit', card.dataset.detailId);
+  });
+  document.getElementById('posterStage').addEventListener('click', e=>{
+    const card = e.target.closest('[data-detail-id]');
+    if(card) openDetail('poster', card.dataset.detailId);
+  });
+  document.getElementById('posterPrev').addEventListener('click', ()=>{
+    if(posterActiveIdx > 0){
+      posterActiveIdx--;
+      renderPosterPanel();
+    }
+  });
+  document.getElementById('posterNext').addEventListener('click', ()=>{
+    if(posterActiveIdx < state.posters.length - 1){
+      posterActiveIdx++;
+      renderPosterPanel();
+    }
+  });
+  document.getElementById('editorialPrev').addEventListener('click', ()=>{
+  if(edActiveIdx > 0){
+    edActiveIdx--;
+    renderEditorialPanel();
+  }
+});
+
+document.getElementById('editorialNext').addEventListener('click', ()=>{
+  if(edActiveIdx < state.editorials.length - 1){
+    edActiveIdx++;
+    renderEditorialPanel();
+  }
+});
+
+  function tickClock(){
+    const now = new Date();
+    document.getElementById('clockTime').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('clockDate').textContent = now.toLocaleDateString('en-US',{weekday:'long', month:'long', day:'numeric', year:'numeric'});
+  }
+
+  const overlay = document.getElementById('adminOverlay');
+  document.getElementById('adminToggle').addEventListener('click', ()=>{
+    overlay.classList.remove('hidden');
+    renderAdminLists();
+  });
+  document.getElementById('adminClose').addEventListener('click', ()=>{
+    overlay.classList.add('hidden');
+    // Note: intentionally NOT reloading from storage here. `state` already
+    // reflects every confirmed save/delete made in this session, and a
+    // storage re-read immediately after a write can lag behind (eventual
+    // consistency), which was silently reverting just-made edits.
+    renderDisplay();
+  });
+  document.getElementById('adminNav').addEventListener('click', e=>{
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    document.querySelectorAll('.admin-nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('sec-'+btn.dataset.sec).classList.add('active');
+  });
+
+  function renderAdminLists(){
+    document.getElementById('annAdminList').innerHTML = state.announcements.map(n => `
+      <div class="list-item">
+        <div class="info"><div class="title">${escapeHtml(n.title)} ${n.priority==='urgent'?'<span style="color:var(--red)">· urgent</span>':''}</div>
+        <div class="meta">${fmtDate(n.date)}${allImages(n).length ? ' · 📷 '+allImages(n).length+(allImages(n).length>1?' photos':' photo') : ''}</div></div>
+        <div class="row-actions">
+          <button class="icon-btn" data-edit-ann="${n.id}">Edit</button>
+          <button class="icon-btn danger" data-del-ann="${n.id}">Delete</button>
+        </div>
+      </div>`).join('') || emptyState('Nothing posted yet.');
+
+    document.getElementById('editAdminList').innerHTML = state.editorials.map((n,i) => `
+      <div class="list-item">
+        <div class="info"><div class="title">${escapeHtml(n.title)}</div>
+        <div class="meta">${escapeHtml(n.author||'')} · ${fmtDate(n.date)}${allImages(n).length ? ' · 📷 '+allImages(n).length+(allImages(n).length>1?' photos':' photo') : ''}${state.editorials.length>1 ? ' · rotation slot '+(i+1)+' of '+state.editorials.length : ''}</div></div>
+        <div class="row-actions">
+          ${state.editorials.length>1 ? `<button class="icon-btn" data-move-edit="${n.id}" data-dir="up" ${i===0?'disabled':''} title="Move earlier in rotation">↑</button>
+          <button class="icon-btn" data-move-edit="${n.id}" data-dir="down" ${i===state.editorials.length-1?'disabled':''} title="Move later in rotation">↓</button>` : ''}
+          <button class="icon-btn" data-edit-edit="${n.id}">Edit</button>
+          <button class="icon-btn danger" data-del-edit="${n.id}">Delete</button>
+        </div>
+      </div>`).join('') || emptyState('No stories yet.');
+
+    document.getElementById('evAdminList').innerHTML = [...state.events].sort((a,b)=>new Date(a.date)-new Date(b.date)).map(n => `
+      <div class="list-item">
+        <div class="info"><div class="title">${escapeHtml(n.title)}</div>
+        <div class="meta">${fmtDate(n.date)} ${n.time?('· '+escapeHtml(n.time)):''} ${n.location?('· '+escapeHtml(n.location)):''}</div></div>
+        <div class="row-actions">
+          <button class="icon-btn" data-edit-ev="${n.id}">Edit</button>
+          <button class="icon-btn danger" data-del-ev="${n.id}">Delete</button>
+        </div>
+      </div>`).join('') || emptyState('No events yet.');
+
+    document.getElementById('posterAdminList').innerHTML = state.posters.map((n,i) => `
+      <div class="list-item">
+        <div class="info"><div class="title">${escapeHtml(n.title)}</div>
+        <div class="meta">${fmtDate(n.date)}${allImages(n).length ? ' · 📷 '+allImages(n).length+(allImages(n).length>1?' photos':' photo') : ' · no photo yet'}${state.posters.length>1 ? ' · rotation slot '+(i+1)+' of '+state.posters.length : ''}</div></div>
+        <div class="row-actions">
+          ${state.posters.length>1 ? `<button class="icon-btn" data-move-poster="${n.id}" data-dir="up" ${i===0?'disabled':''} title="Move earlier in rotation">↑</button>
+          <button class="icon-btn" data-move-poster="${n.id}" data-dir="down" ${i===state.posters.length-1?'disabled':''} title="Move later in rotation">↓</button>` : ''}
+          <button class="icon-btn" data-edit-poster="${n.id}">Edit</button>
+          <button class="icon-btn danger" data-del-poster="${n.id}">Delete</button>
+        </div>
+      </div>`).join('') || emptyState('No posters yet.');
+
+    const w = state.weather;
+    document.getElementById('wxTempInput').value = w.temp ?? '';
+    document.getElementById('wxCondInput').value = w.condition ?? '';
+    document.getElementById('wxHumInput').value = w.humidity ?? '';
+    document.getElementById('wxAqiInput').value = w.aqi ?? '';
+    document.getElementById('wxAdvInput').value = w.advisory ?? '';
+  }
+
+  const formAnn = document.getElementById('formAnn');
+  formAnn.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const submitBtn = document.getElementById('annSubmitBtn');
+    const existing = editing.ann ? state.announcements.find(x=>x.id===editing.ann) : null;
+    const item = {
+      id: editing.ann || genId(),
+      title: document.getElementById('annTitle').value.trim(),
+      body: document.getElementById('annBody').value.trim(),
+      priority: document.getElementById('annPriority').value,
+      date: document.getElementById('annDate').value || new Date().toISOString().slice(0,10)
+    };
+    const annResult = annImageCtl.getResult();
+    item.images = annResult !== undefined ? annResult : allImages(existing);
+    const nextList = editing.ann
+      ? state.announcements.map(n => n.id===editing.ann ? item : n)
+      : [...state.announcements, item];
+
+    submitBtn.disabled = true;
+    const ok = await storageSet(KEYS.ann, nextList);
+    submitBtn.disabled = false;
+
+    if(ok){
+      state.announcements = nextList;
+      renderAdminLists(); renderDisplay();
+      resetAnnForm();
+      showSaveNote('annSaveNote', 'Saved · ' + new Date().toLocaleTimeString());
+    } else {
+      // Keep the form filled in so nothing typed is lost; the admin can retry.
+      showSaveNote('annSaveNote', 'Could not save — check your connection and try again.', true);
+    }
+  });
+  function resetAnnForm(){
+    editing.ann = null; formAnn.reset();
+    annImageCtl.reset();
+    document.getElementById('annSubmitBtn').textContent = 'Add announcement';
+    document.getElementById('annCancelBtn').style.display = 'none';
+  }
+  document.getElementById('annCancelBtn').addEventListener('click', ()=>{ resetAnnForm(); showSaveNote('annSaveNote',''); });
+  document.getElementById('annAdminList').addEventListener('click', async e=>{
+    const editBtn = e.target.closest('[data-edit-ann]');
+    const delBtn = e.target.closest('[data-del-ann]');
+    if(editBtn){
+      const editId = editBtn.dataset.editAnn;
+      const n = state.announcements.find(x=>x.id===editId); if(!n) return;
+      document.getElementById('annTitle').value = n.title;
+      document.getElementById('annBody').value = n.body;
+      document.getElementById('annPriority').value = n.priority;
+      document.getElementById('annDate').value = n.date;
+      annImageCtl.showExisting(allImages(n));
+      editing.ann = editId;
+      document.getElementById('annSubmitBtn').textContent = 'Save changes';
+      document.getElementById('annCancelBtn').style.display = 'inline-block';
+    }
+    if(delBtn){
+      const delId = delBtn.dataset.delAnn;
+      if(!confirm('Delete this announcement? This cannot be undone.')) return;
+      delBtn.disabled = true;
+      const prev = state.announcements;
+      const nextList = state.announcements.filter(x=>x.id!==delId);
+      const ok = await storageSet(KEYS.ann, nextList);
+      if(ok){
+        state.announcements = nextList;
+        if(editing.ann===delId) resetAnnForm();
+        renderAdminLists(); renderDisplay();
+      } else {
+        delBtn.disabled = false;
+        alert('Could not delete — check your connection and try again.');
+      }
+    }
+  });
+
+  const formEdit = document.getElementById('formEdit');
+  formEdit.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const submitBtn = document.getElementById('editSubmitBtn');
+    const existingEd = editing.edit ? state.editorials.find(x=>x.id===editing.edit) : null;
+    const item = {
+      id: editing.edit || genId(),
+      title: document.getElementById('editTitle').value.trim(),
+      author: document.getElementById('editAuthor').value.trim() || 'PENRO Information Unit',
+      date: document.getElementById('editDate').value || new Date().toISOString().slice(0,10),
+      body: document.getElementById('editBody').value.trim()
+    };
+    const editResult = editImageCtl.getResult();
+    item.images = editResult !== undefined ? editResult : allImages(existingEd);
+    const nextList = editing.edit
+      ? state.editorials.map(n => n.id===editing.edit ? item : n)
+      : [...state.editorials, item];
+
+    submitBtn.disabled = true;
+    const ok = await storageSet(KEYS.edit, nextList);
+    submitBtn.disabled = false;
+
+    if(ok){
+      state.editorials = nextList;
+      renderAdminLists(); renderDisplay();
+      resetEditForm();
+      showSaveNote('editSaveNote', 'Saved · ' + new Date().toLocaleTimeString());
+    } else {
+      showSaveNote('editSaveNote', 'Could not save — check your connection and try again.', true);
+    }
+  });
+  function resetEditForm(){
+    editing.edit = null; formEdit.reset();
+    editImageCtl.reset();
+    document.getElementById('editSubmitBtn').textContent = 'Publish story';
+    document.getElementById('editCancelBtn').style.display = 'none';
+  }
+  document.getElementById('editCancelBtn').addEventListener('click', ()=>{ resetEditForm(); showSaveNote('editSaveNote',''); });
+  document.getElementById('editAdminList').addEventListener('click', async e=>{
+    const editBtn = e.target.closest('[data-edit-edit]');
+    const delBtn = e.target.closest('[data-del-edit]');
+    const moveBtn = e.target.closest('[data-move-edit]');
+    if(editBtn){
+      const editId = editBtn.dataset.editEdit;
+      const n = state.editorials.find(x=>x.id===editId); if(!n) return;
+      document.getElementById('editTitle').value = n.title;
+      document.getElementById('editAuthor').value = n.author;
+      document.getElementById('editDate').value = n.date;
+      document.getElementById('editBody').value = n.body;
+      editImageCtl.showExisting(allImages(n));
+      editing.edit = editId;
+      document.getElementById('editSubmitBtn').textContent = 'Save changes';
+      document.getElementById('editCancelBtn').style.display = 'inline-block';
+    }
+    if(delBtn){
+      const delId = delBtn.dataset.delEdit;
+      if(!confirm('Delete this story? This cannot be undone.')) return;
+      delBtn.disabled = true;
+      const nextList = state.editorials.filter(x=>x.id!==delId);
+      const ok = await storageSet(KEYS.edit, nextList);
+      if(ok){
+        state.editorials = nextList;
+        if(editing.edit===delId) resetEditForm();
+        renderAdminLists(); renderDisplay();
+      } else {
+        delBtn.disabled = false;
+        alert('Could not delete — check your connection and try again.');
+      }
+    }
+    if(moveBtn){
+      // Reorders the rotation sequence shown on the live Editorial & News panel.
+      const moveId = moveBtn.dataset.moveEdit, dir = moveBtn.dataset.dir;
+      const idx = state.editorials.findIndex(x=>x.id===moveId);
+      const swapWith = dir==='up' ? idx-1 : idx+1;
+      if(idx<0 || swapWith<0 || swapWith>=state.editorials.length) return;
+      const nextList = [...state.editorials];
+      [nextList[idx], nextList[swapWith]] = [nextList[swapWith], nextList[idx]];
+      moveBtn.disabled = true;
+      const ok = await storageSet(KEYS.edit, nextList);
+      if(ok){
+        state.editorials = nextList;
+        renderAdminLists(); renderDisplay();
+      } else {
+        moveBtn.disabled = false;
+        alert('Could not reorder — check your connection and try again.');
+      }
+    }
+  });
+
+  const formPoster = document.getElementById('formPoster');
+  formPoster.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const submitBtn = document.getElementById('posterSubmitBtn');
+    const existingPoster = editing.poster ? state.posters.find(x=>x.id===editing.poster) : null;
+    const item = {
+      id: editing.poster || genId(),
+      title: document.getElementById('posterTitle').value.trim(),
+      date: document.getElementById('posterDate').value || new Date().toISOString().slice(0,10)
+    };
+    const posterResult = posterImageCtl.getResult();
+    item.images = posterResult !== undefined ? posterResult : allImages(existingPoster);
+    const nextList = editing.poster
+      ? state.posters.map(n => n.id===editing.poster ? item : n)
+      : [...state.posters, item];
+
+    submitBtn.disabled = true;
+    const ok = await storageSet(KEYS.poster, nextList);
+    submitBtn.disabled = false;
+
+    if(ok){
+      state.posters = nextList;
+      renderAdminLists(); renderDisplay();
+      resetPosterForm();
+      showSaveNote('posterSaveNote', 'Saved · ' + new Date().toLocaleTimeString());
+    } else {
+      showSaveNote('posterSaveNote', 'Could not save — check your connection and try again.', true);
+    }
+  });
+  function resetPosterForm(){
+    editing.poster = null; formPoster.reset();
+    posterImageCtl.reset();
+    document.getElementById('posterSubmitBtn').textContent = 'Add poster';
+    document.getElementById('posterCancelBtn').style.display = 'none';
+  }
+  document.getElementById('posterCancelBtn').addEventListener('click', ()=>{ resetPosterForm(); showSaveNote('posterSaveNote',''); });
+  document.getElementById('posterAdminList').addEventListener('click', async e=>{
+    const editBtn = e.target.closest('[data-edit-poster]');
+    const delBtn = e.target.closest('[data-del-poster]');
+    const moveBtn = e.target.closest('[data-move-poster]');
+    if(editBtn){
+      const editId = editBtn.dataset.editPoster;
+      const n = state.posters.find(x=>x.id===editId); if(!n) return;
+      document.getElementById('posterTitle').value = n.title;
+      document.getElementById('posterDate').value = n.date;
+      posterImageCtl.showExisting(allImages(n));
+      editing.poster = editId;
+      document.getElementById('posterSubmitBtn').textContent = 'Save changes';
+      document.getElementById('posterCancelBtn').style.display = 'inline-block';
+    }
+    if(delBtn){
+      const delId = delBtn.dataset.delPoster;
+      if(!confirm('Delete this poster? This cannot be undone.')) return;
+      delBtn.disabled = true;
+      const nextList = state.posters.filter(x=>x.id!==delId);
+      const ok = await storageSet(KEYS.poster, nextList);
+      if(ok){
+        state.posters = nextList;
+        if(editing.poster===delId) resetPosterForm();
+        renderAdminLists(); renderDisplay();
+      } else {
+        delBtn.disabled = false;
+        alert('Could not delete — check your connection and try again.');
+      }
+    }
+    if(moveBtn){
+      // Reorders the rotation sequence shown on the live Posters panel.
+      const moveId = moveBtn.dataset.movePoster, dir = moveBtn.dataset.dir;
+      const idx = state.posters.findIndex(x=>x.id===moveId);
+      const swapWith = dir==='up' ? idx-1 : idx+1;
+      if(idx<0 || swapWith<0 || swapWith>=state.posters.length) return;
+      const nextList = [...state.posters];
+      [nextList[idx], nextList[swapWith]] = [nextList[swapWith], nextList[idx]];
+      moveBtn.disabled = true;
+      const ok = await storageSet(KEYS.poster, nextList);
+      if(ok){
+        state.posters = nextList;
+        renderAdminLists(); renderDisplay();
+      } else {
+        moveBtn.disabled = false;
+        alert('Could not reorder — check your connection and try again.');
+      }
+    }
+  });
+
+  const formEv = document.getElementById('formEv');
+  formEv.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const submitBtn = document.getElementById('evSubmitBtn');
+    const item = {
+      id: editing.ev || genId(),
+      title: document.getElementById('evTitle').value.trim(),
+      date: document.getElementById('evDate').value,
+      time: document.getElementById('evTime').value.trim(),
+      location: document.getElementById('evLoc').value.trim()
+    };
+    const nextList = editing.ev
+      ? state.events.map(n => n.id===editing.ev ? item : n)
+      : [...state.events, item];
+
+    submitBtn.disabled = true;
+    const ok = await storageSet(KEYS.ev, nextList);
+    submitBtn.disabled = false;
+
+    if(ok){
+      state.events = nextList;
+      renderAdminLists(); renderDisplay();
+      resetEvForm();
+      showSaveNote('evSaveNote', 'Saved · ' + new Date().toLocaleTimeString());
+    } else {
+      showSaveNote('evSaveNote', 'Could not save — check your connection and try again.', true);
+    }
+  });
+  function resetEvForm(){
+    editing.ev = null; formEv.reset();
+    document.getElementById('evSubmitBtn').textContent = 'Add event';
+    document.getElementById('evCancelBtn').style.display = 'none';
+  }
+  document.getElementById('evCancelBtn').addEventListener('click', ()=>{ resetEvForm(); showSaveNote('evSaveNote',''); });
+  document.getElementById('evAdminList').addEventListener('click', async e=>{
+    const editId = e.target.dataset.editEv, delId = e.target.dataset.delEv;
+    if(editId){
+      const n = state.events.find(x=>x.id===editId); if(!n) return;
+      document.getElementById('evTitle').value = n.title;
+      document.getElementById('evDate').value = n.date;
+      document.getElementById('evTime').value = n.time;
+      document.getElementById('evLoc').value = n.location;
+      editing.ev = editId;
+      document.getElementById('evSubmitBtn').textContent = 'Save changes';
+      document.getElementById('evCancelBtn').style.display = 'inline-block';
+    }
+    if(delId){
+      if(!confirm('Delete this event? This cannot be undone.')) return;
+      const delBtn = e.target;
+      delBtn.disabled = true;
+      const nextList = state.events.filter(x=>x.id!==delId);
+      const ok = await storageSet(KEYS.ev, nextList);
+      if(ok){
+        state.events = nextList;
+        if(editing.ev===delId) resetEvForm();
+        renderAdminLists(); renderDisplay();
+      } else {
+        delBtn.disabled = false;
+        alert('Could not delete — check your connection and try again.');
+      }
+    }
+  });
+
+  document.getElementById('formWx').addEventListener('submit', async e=>{
+    e.preventDefault();
+    state.weather = {
+      temp: parseFloat(document.getElementById('wxTempInput').value),
+      condition: document.getElementById('wxCondInput').value.trim(),
+      humidity: parseInt(document.getElementById('wxHumInput').value || '0', 10),
+      aqi: document.getElementById('wxAqiInput').value.trim(),
+      advisory: document.getElementById('wxAdvInput').value.trim(),
+      source: 'manual',
+      updated: new Date().toISOString()
+    };
+    const ok = await storageSet(KEYS.wx, state.weather);
+    if(ok){
+      renderDisplay();
+      showSaveNote('wxSaveNote', 'Saved · ' + new Date().toLocaleTimeString());
+    } else {
+      showSaveNote('wxSaveNote', 'Could not save — check your connection and try again.', true);
+    }
+  });
+
+  document.getElementById('wxFetchNow').addEventListener('click', async ()=>{
+    const btn = document.getElementById('wxFetchNow');
+    btn.disabled = true; btn.textContent = 'Fetching…';
+    const live = await fetchLiveWeather();
+    btn.disabled = false; btn.textContent = '🔄 Fetch live data now';
+    if(live && !live.error){
+      document.getElementById('wxTempInput').value = live.temp ?? '';
+      document.getElementById('wxCondInput').value = live.condition ?? '';
+      document.getElementById('wxHumInput').value = live.humidity ?? '';
+      document.getElementById('wxAqiInput').value = live.aqi ?? '';
+      // Advisory is deliberately left untouched — that's the admin's own note.
+      showSaveNote('wxSaveNote', 'Fetched live data — review, then click "Update environmental data" to save.');
+    } 
+    else {
+      showSaveNote('wxSaveNote', 'Fetch failed: ' + (live && live.error ? live.error : 'unknown error') + ' — see the backend console window for the full traceback.', true);
+    }
+  });
+
+  async function init(){
+    await loadAll();
+    renderDisplay();
+    tickClock();
+    setInterval(tickClock, 30000);
+    startRotation();
+    setInterval(async ()=>{
+      // Skip while the admin editor is open so a background refresh can't
+      // clobber changes that are being made but not yet reflected in storage.
+      if(!overlay.classList.contains('hidden')) return;
+      await loadAll(); renderDisplay();
+    }, 25000);
+
+    // Live weather: only meaningful when there's a backend to proxy through.
+  }
+  init();
+})();
+</script>
+</body>
+</html>
