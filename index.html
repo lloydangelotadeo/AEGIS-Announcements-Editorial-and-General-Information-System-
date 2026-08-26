@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>AEGIS — PENRO Nueva Vizcaya</title>
+<title>AEGIS - DEMO</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -488,9 +488,9 @@
      screen edge-to-edge like the portrait kiosk block does, then reflows
      the content to use the extra width instead of stretching a
      phone-width column across it: card lists become a multi-column grid,
-     and the single-item panels (Editorial, Environment, Posters) are
-     capped to a comfortable reading width and centered rather than
-     stretching edge-to-edge on a wide screen. */
+     Editorial/Environment are capped to a comfortable reading width and
+     centered, and Posters — meant to be full-screen — stays uncapped so
+     poster artwork gets the full width of the screen. */
   @media (orientation: landscape){
     html{font-size:clamp(15px, 0.4vw + 1vh, 19px);}
     #app{padding:0;background:var(--green-900);}
@@ -527,11 +527,20 @@
     }
     #annList .card, #evList .card{margin-bottom:0;}
 
-    /* Editorial, Environment, Posters: single-item panels read best at a
-       bounded, magazine-style width even on a very wide screen. */
-    #editList, #wxPanel, #posterStage, #editorialNav, #posterNav{
+    /* Editorial + Environment: text-first panels read best at a bounded,
+       magazine-style width even on a very wide screen. */
+    #editList, #wxPanel, #editorialNav{
       max-width:640px;margin-left:auto;margin-right:auto;
     }
+
+    /* Posters are meant to display full-screen (per the admin hint), so
+       unlike Editorial/Weather they stay uncapped and use the full
+       landscape width — object-fit:contain on the image already handles
+       whichever orientation the poster artwork itself is in (portrait
+       flyer or landscape banner) without distorting it. Keep the nav
+       centered at a comfortable width so prev/next don't end up stranded
+       far apart under a very wide poster. */
+    #posterNav{max-width:640px;margin-left:auto;margin-right:auto;}
 
     .ticker-bar{height:5%;min-height:32px;}
     .footer-strip{font-size:0.6rem;padding:0.8% 2%;}
@@ -803,15 +812,15 @@
     ],
     weather:{temp:26, condition:'Partly Cloudy', humidity:78, aqi:'Good', advisory:'Light rain expected in upland barangays this afternoon. Motorists are advised to watch for slippery roads.', updated:new Date().toISOString()},
     posters:[
-      {id:'p1', title:'No Noon Break', date:new Date().toISOString().slice(0,10), images:[]},
-      {id:'p2', title:'Anti-Red Tape Act', date:new Date().toISOString().slice(0,10), images:[]}
+      {id:'p1', title:'Poster 1', date:new Date().toISOString().slice(0,10), images:[]},
+      {id:'p2', title:'Poster 2', date:new Date().toISOString().slice(0,10), images:[]}
     ]
   };
 
   let state = { announcements:[], editorials:[], events:[], weather:{}, posters:[] };
   let editing = { ann:null, edit:null, ev:null, poster:null };
 
-  //replacement to run demo mode
+  //backend for demo mode
   const STORAGE_PREFIX = 'aegis_demo_';
 
   async function storageGet(key) {
@@ -877,8 +886,6 @@
 
   function genId(){ return Math.random().toString(36).slice(2,9); }
 
-  // Compress/resize an uploaded image file into a small base64 JPEG data URL,
-  // since storage keys are text/JSON only and capped at 5MB.
   function fileToCompressedDataUrl(file, maxDim=900, quality=0.72){
     return new Promise((resolve, reject)=>{
       const reader = new FileReader();
@@ -904,8 +911,8 @@
   function wireImageField(inputId, rowId){
     const input = document.getElementById(inputId);
     const row = document.getElementById(rowId);
-    let current = [];   // data URLs currently staged for this form
-    let touched = false; // becomes true once the user adds or removes a photo
+    let current = [];   
+    let touched = false; 
 
     function renderThumbs(){
       row.innerHTML = current.map((src,i)=>`
@@ -930,12 +937,10 @@
         touched = true;
         renderThumbs();
       }catch(err){ console.error('image processing failed', err); }
-      input.value = ''; // lets the same file be re-selected later if needed
+      input.value = ''; 
     });
     return {
-      // Populates the thumbnail row from an item's saved images without
-      // marking the field as "touched" — so if the admin doesn't interact
-      // with the photos at all, the save keeps them exactly as they were.
+      
       showExisting(images){
         current = Array.isArray(images) ? images.slice() : [];
         touched = false;
@@ -950,8 +955,6 @@
   const editImageCtl = wireImageField('editImageInput','editImagePreviewRow');
   const posterImageCtl = wireImageField('posterImageInput','posterImagePreviewRow');
 
-  // Back-compat: earlier versions of AEGIS stored a single `image` field
-  // instead of an `images` array. These read either shape transparently.
   function allImages(item){
     if(item && Array.isArray(item.images)) return item.images;
     if(item && item.image) return [item.image];
@@ -1058,8 +1061,6 @@
     return String(str??'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   }
 
-  // Editorial & News rotation: cycles through multiple stories on an interval;
-  // with a single story it just displays it (no rotation needed).
   let edActiveIdx = 0, edRotateTimer = null;
   function renderEditorialPanel(){
     const editList = document.getElementById('editList');
@@ -1112,8 +1113,6 @@
     }
   }
 
-  // Posters: rotates full-bleed poster images (e.g. "No Noon Break",
-  // "Anti-Red Tape Act") the same way the Editorial panel rotates stories.
   let posterActiveIdx = 0, posterRotateTimer = null;
   function renderPosterPanel(){
     const stage = document.getElementById('posterStage');
@@ -1184,7 +1183,6 @@
     startRotation();
   });
 
-  // ===== Detail modal: enlarged, interactive view for a tapped card =====
   let galleryImages = [], galleryIdx = 0;
 
   function renderGalleryFrame(){
@@ -1222,7 +1220,7 @@
     renderGalleryFrame();
 
     document.getElementById('detailModal').classList.remove('hidden');
-    // Pause auto-rotation while someone's actually reading something.
+
     if(rotateTimer){ clearInterval(rotateTimer); rotateTimer = null; }
     if(edRotateTimer){ clearInterval(edRotateTimer); edRotateTimer = null; }
     if(posterRotateTimer){ clearInterval(posterRotateTimer); posterRotateTimer = null; }
@@ -1299,10 +1297,7 @@ document.getElementById('editorialNext').addEventListener('click', ()=>{
   });
   document.getElementById('adminClose').addEventListener('click', ()=>{
     overlay.classList.add('hidden');
-    // Note: intentionally NOT reloading from storage here. `state` already
-    // reflects every confirmed save/delete made in this session, and a
-    // storage re-read immediately after a write can lag behind (eventual
-    // consistency), which was silently reverting just-made edits.
+    
     renderDisplay();
   });
   document.getElementById('adminNav').addEventListener('click', e=>{
@@ -1395,7 +1390,7 @@ document.getElementById('editorialNext').addEventListener('click', ()=>{
       resetAnnForm();
       showSaveNote('annSaveNote', 'Saved · ' + new Date().toLocaleTimeString());
     } else {
-      // Keep the form filled in so nothing typed is lost; the admin can retry.
+      
       showSaveNote('annSaveNote', 'Could not save — check your connection and try again.', true);
     }
   });
@@ -1509,7 +1504,7 @@ document.getElementById('editorialNext').addEventListener('click', ()=>{
       }
     }
     if(moveBtn){
-      // Reorders the rotation sequence shown on the live Editorial & News panel.
+      
       const moveId = moveBtn.dataset.moveEdit, dir = moveBtn.dataset.dir;
       const idx = state.editorials.findIndex(x=>x.id===moveId);
       const swapWith = dir==='up' ? idx-1 : idx+1;
