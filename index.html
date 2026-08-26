@@ -479,6 +479,63 @@
     letter-spacing:.05em;
     }
   }
+
+  /* ===== LANDSCAPE KIOSK / DESKTOP MODE =====
+     Landscape used to always mean "a laptop/desktop previewing the portrait
+     kiosk", so it got the padded phone-mockup frame. Landscape screens
+     (an office TV/monitor mounted sideways, or just someone's browser
+     window) are a real deployment target too, so this fills the whole
+     screen edge-to-edge like the portrait kiosk block does, then reflows
+     the content to use the extra width instead of stretching a
+     phone-width column across it: card lists become a multi-column grid,
+     and the single-item panels (Editorial, Environment, Posters) are
+     capped to a comfortable reading width and centered rather than
+     stretching edge-to-edge on a wide screen. */
+  @media (orientation: landscape){
+    html{font-size:clamp(15px, 0.4vw + 1vh, 19px);}
+    #app{padding:0;background:var(--green-900);}
+    .frame{
+      width:100vw;height:100vh;height:100dvh;
+      max-width:none;max-height:none;aspect-ratio:auto;
+      border-radius:0;box-shadow:none;
+    }
+
+    /* Masthead + step-nav: a landscape screen has much less height to
+       spare relative to its width than a portrait kiosk does, so keep
+       these as compact bars instead of the tall portrait treatment. */
+    .masthead{padding:1% 2%;}
+    .masthead-top{gap:14px;}
+    .seal{width:auto;min-width:40px;max-width:40px;}
+    .wordmark{font-size:clamp(1.3rem, 1.6vw, 1.8rem);}
+    .masthead-right .r1{font-size:0.85rem;}
+    .masthead-right .r2{font-size:0.75rem;}
+    .status-row{margin-top:0.8%;padding-top:0.8%;}
+
+    .step-nav{padding:0.7% 2%;}
+    .step-dot{width:26px;height:26px;}
+    .step-label{font-size:0.78rem;}
+
+    .panel{padding:2.5% 4%;}
+
+    /* Notices + Calendar: flow cards into columns so they use the width
+       instead of one narrow strip stretched across the whole screen. */
+    #annList, #evList{
+      display:grid;
+      grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+      gap:14px;
+      align-content:start;
+    }
+    #annList .card, #evList .card{margin-bottom:0;}
+
+    /* Editorial, Environment, Posters: single-item panels read best at a
+       bounded, magazine-style width even on a very wide screen. */
+    #editList, #wxPanel, #posterStage, #editorialNav, #posterNav{
+      max-width:640px;margin-left:auto;margin-right:auto;
+    }
+
+    .ticker-bar{height:5%;min-height:32px;}
+    .footer-strip{font-size:0.6rem;padding:0.8% 2%;}
+  }
 </style>
 </head>
 <body>
