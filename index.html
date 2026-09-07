@@ -480,17 +480,6 @@
     }
   }
 
-  /* ===== LANDSCAPE KIOSK / DESKTOP MODE =====
-     Landscape used to always mean "a laptop/desktop previewing the portrait
-     kiosk", so it got the padded phone-mockup frame. Landscape screens
-     (an office TV/monitor mounted sideways, or just someone's browser
-     window) are a real deployment target too, so this fills the whole
-     screen edge-to-edge like the portrait kiosk block does, then reflows
-     the content to use the extra width instead of stretching a
-     phone-width column across it: card lists become a multi-column grid,
-     Editorial/Environment are capped to a comfortable reading width and
-     centered, and Posters — meant to be full-screen — stays uncapped so
-     poster artwork gets the full width of the screen. */
   @media (orientation: landscape){
     html{font-size:clamp(15px, 0.4vw + 1vh, 19px);}
     #app{padding:0;background:var(--green-900);}
@@ -500,9 +489,6 @@
       border-radius:0;box-shadow:none;
     }
 
-    /* Masthead + step-nav: a landscape screen has much less height to
-       spare relative to its width than a portrait kiosk does, so keep
-       these as compact bars instead of the tall portrait treatment. */
     .masthead{padding:1% 2%;}
     .masthead-top{gap:14px;}
     .seal{width:auto;min-width:40px;max-width:40px;}
@@ -517,8 +503,6 @@
 
     .panel{padding:2.5% 4%;}
 
-    /* Notices + Calendar: flow cards into columns so they use the width
-       instead of one narrow strip stretched across the whole screen. */
     #annList, #evList{
       display:grid;
       grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
@@ -527,19 +511,10 @@
     }
     #annList .card, #evList .card{margin-bottom:0;}
 
-    /* Editorial + Environment: text-first panels read best at a bounded,
-       magazine-style width even on a very wide screen. */
     #editList, #wxPanel, #editorialNav{
       max-width:640px;margin-left:auto;margin-right:auto;
     }
 
-    /* Posters are meant to display full-screen (per the admin hint), so
-       unlike Editorial/Weather they stay uncapped and use the full
-       landscape width — object-fit:contain on the image already handles
-       whichever orientation the poster artwork itself is in (portrait
-       flyer or landscape banner) without distorting it. Keep the nav
-       centered at a comfortable width so prev/next don't end up stranded
-       far apart under a very wide poster. */
     #posterNav{max-width:640px;margin-left:auto;margin-right:auto;}
 
     .ticker-bar{height:5%;min-height:32px;}
@@ -865,8 +840,6 @@
   async function fetchLiveWeather(){
     return {error: 'no-backend'};
   }
-  // Pulls live data, merges it into state.weather (keeping the admin's own
-  // advisory text untouched), and saves it so every display picks it up.
   async function autoUpdateWeather(){
     const live = await fetchLiveWeather();
     if(!live || live.error) return false;
